@@ -26,12 +26,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y doxygen
-          python3 -m pip install mkdocs
+          python3 -m pip install --user mkdocs
 
       - name: Build documentation
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           ./scripts/gen_docs.sh
+          test -f site/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

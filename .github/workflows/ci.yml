@@ -25,9 +25,11 @@ jobs:
           python3 -m pip install --user 'cmake>=3.30'
 
       - name: Install SSH Key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.MY_PRIVATE_KEY_1 }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
 
       - name: Add GitHub to known_hosts
         run: |
@@ -88,9 +90,11 @@ jobs:
           python3 -m pip install --user 'cmake>=3.30'
 
       - name: Install SSH Key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.MY_PRIVATE_KEY_1 }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
 
       - name: Add GitHub to known_hosts
         run: |
@@ -145,9 +149,11 @@ jobs:
           python3 -m pip install --user 'cmake>=3.30'
 
       - name: Install SSH Key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.MY_PRIVATE_KEY_1 }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
 
       - name: Add GitHub to known_hosts
         run: |
