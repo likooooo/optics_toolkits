@@ -33,6 +33,9 @@ if [ -f "${REQ}" ]; then
 fi
 
 echo "==> py_visualizer -> ${PREFIX}"
+# build.py sets CPLUS_INCLUDE_PATH so py_visualizer finds type_traist_notebook headers
+# (find_package only provides the config file, not -I for header-only installs).
+export CPLUS_INCLUDE_PATH="${PREFIX}/include${CPLUS_INCLUDE_PATH:+:${CPLUS_INCLUDE_PATH}}"
 build_and_install "${INFRA_DIR}/py_visualizer"
 
 echo "CMAKE_PREFIX_PATH=${PREFIX}"
