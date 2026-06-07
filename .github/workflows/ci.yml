@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  INFRA_REPO: git@github.com:likooooo/infrastructure.git
+  INFRA_REPO: https://github.com/likooooo/infrastructure.git
 
 jobs:
   build-and-test:
@@ -36,17 +36,17 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
 
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
       - name: Clone infrastructure (minimal submodules)
         run: |
           cd "${GITHUB_WORKSPACE}/.."
           git clone --depth 1 "${INFRA_REPO}" infrastructure
           cd infrastructure
           git submodule update --init --depth 1 type_traist_notebook py_visualizer
-
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          persist-credentials: false
 
       - name: Build minimal infrastructure
         run: |
@@ -101,17 +101,17 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
 
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
       - name: Clone infrastructure (minimal submodules)
         run: |
           cd "${GITHUB_WORKSPACE}/.."
           git clone --depth 1 "${INFRA_REPO}" infrastructure
           cd infrastructure
           git submodule update --init --depth 1 type_traist_notebook py_visualizer
-
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          persist-credentials: false
 
       - name: Build minimal infrastructure
         run: |
@@ -160,17 +160,17 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
 
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
       - name: Clone infrastructure (minimal submodules)
         run: |
           cd "${GITHUB_WORKSPACE}/.."
           git clone --depth 1 "${INFRA_REPO}" infrastructure
           cd infrastructure
           git submodule update --init --depth 1 type_traist_notebook
-
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          persist-credentials: false
 
       - name: Build minimal infrastructure (type_traist only)
         run: |
