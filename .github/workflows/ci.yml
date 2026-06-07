@@ -32,6 +32,7 @@ jobs:
       - name: Setup SSH for private submodules
         env:
           MY_PRIVATE_KEY_1: ${{ secrets.MY_PRIVATE_KEY_1 }}
+          MY_PRIVATE_KEY_1_VAR: ${{ vars.MY_PRIVATE_KEY_1 }}
         run: bash scripts/ci_setup_ssh.sh
 
       - name: Init core submodule
@@ -93,6 +94,7 @@ jobs:
       - name: Setup SSH for private submodules
         env:
           MY_PRIVATE_KEY_1: ${{ secrets.MY_PRIVATE_KEY_1 }}
+          MY_PRIVATE_KEY_1_VAR: ${{ vars.MY_PRIVATE_KEY_1 }}
         run: bash scripts/ci_setup_ssh.sh
 
       - name: Init core submodule
@@ -148,6 +150,7 @@ jobs:
       - name: Setup SSH for private submodules
         env:
           MY_PRIVATE_KEY_1: ${{ secrets.MY_PRIVATE_KEY_1 }}
+          MY_PRIVATE_KEY_1_VAR: ${{ vars.MY_PRIVATE_KEY_1 }}
         run: bash scripts/ci_setup_ssh.sh
 
       - name: Init core submodule
