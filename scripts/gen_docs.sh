@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 if command -v doxygen >/dev/null 2>&1; then
-    (cd docs && doxygen Doxyfile)
-    echo "Doxygen HTML: docs/build/doxygen/html"
+    if (cd docs && doxygen Doxyfile); then
+        echo "Doxygen HTML: docs/build/doxygen/html"
+    else
+        echo "doxygen failed; skipping C API docs"
+    fi
 else
     echo "doxygen not found; skipping C API docs"
 fi
@@ -48,4 +51,5 @@ if command -v mkdocs >/dev/null 2>&1; then
     echo "MkDocs site: site/"
 else
     echo "mkdocs not found; skipping site build"
+    exit 1
 fi
