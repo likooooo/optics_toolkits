@@ -88,7 +88,7 @@ GitHub Actions (`.github/workflows/ci.yml`) clones [infrastructure](https://gith
 | `viz` | `OPTICS_ENABLE_PYTHON_CORE_PLUGINS=ON`, `ctest -L viz` (`MPLBACKEND=Agg`) |
 | `matlab-bindings` | `OPTICS_BUILD_MATLAB=ON` without MATLAB — expects configure skip + static package check |
 
-Private submodules require repository secret `MY_PRIVATE_KEY_1` (SSH deploy key).
+Private submodules require repository secret `MY_PRIVATE_KEY_1` (SSH deploy key with read access to `simulation`, `type_traist_notebook`, and `py_visualizer`). Configure it under **Settings → Secrets and variables → Actions → Secrets** (not Variables).
 
 Local plugins build:
 
