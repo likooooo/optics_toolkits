@@ -1,0 +1,9 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: optics_toolkits
+Description: Cross-language C ABI for simulation TMM
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -loptics_toolkits
+Cflags: -I${includedir} @OPTICS_PC_CFLAGS@

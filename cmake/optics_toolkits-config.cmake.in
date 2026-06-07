@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(type_traist_notebook REQUIRED)
+
+include("${CMAKE_CURRENT_LIST_DIR}/optics_toolkits-targets.cmake")
+
+set(optics_toolkits_VERSION "@PROJECT_VERSION@")

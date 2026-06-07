@@ -1,0 +1,12 @@
+PROJECT_NAME           = optics_toolkits
+PROJECT_NUMBER         = 0.1.0
+OUTPUT_DIRECTORY       = build/doxygen
+INPUT                  = ../include/optics_toolkits
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = NO
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+HAVE_DOT               = NO
+QUIET                  = YES

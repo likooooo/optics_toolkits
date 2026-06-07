@@ -1,0 +1,11 @@
+site_name: optics_toolkits
+repo_url: https://github.com/likooooo/optics_toolkits
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - C API: c-api.md
+  - Fortran: fortran.md
+  - C#: csharp.md
+  - Examples: examples.md
+theme:
+  name: readthedocs

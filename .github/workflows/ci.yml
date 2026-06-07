@@ -1,0 +1,199 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+env:
+  INFRA_REPO: git@github.com:likooooo/infrastructure.git
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        precision: [f32, f64]
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            ninja-build gfortran clang-20 \
+            libboost-all-dev python3-dev python3-pip pkg-config
+          python3 -m pip install --user 'cmake>=3.30'
+
+      - name: Install SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+
+      - name: Add GitHub to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
+
+      - name: Clone infrastructure (minimal submodules)
+        run: |
+          cd "${GITHUB_WORKSPACE}/.."
+          git clone --depth 1 "${INFRA_REPO}" infrastructure
+          cd infrastructure
+          git submodule update --init --depth 1 type_traist_notebook py_visualizer
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Build minimal infrastructure
+        run: |
+          export PATH="${HOME}/.local/bin:${PATH}"
+          bash scripts/ci_infra_minimal.sh "${GITHUB_WORKSPACE}/../infrastructure"
+          echo "CMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/../infrastructure/.inf_install" >> "$GITHUB_ENV"
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Configure
+        run: |
+          cmake -S . -B "build-${{ matrix.precision }}" -G Ninja \
+            -DCMAKE_CXX_COMPILER=clang++-20 \
+            -DCMAKE_C_COMPILER=clang-20 \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DOPTICS_PRECISION=${{ matrix.precision }} \
+            -DOPTICS_ENABLE_PYTHON_CORE_PLUGINS=OFF \
+            -DOPTICS_BUILD_MATLAB=OFF \
+            -DOPTICS_BUILD_CSHARP=ON \
+            -DOPTICS_BUILD_FORTRAN=ON \
+            -DCMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}"
+
+      - name: Build
+        run: cmake --build "build-${{ matrix.precision }}"
+
+      - name: Test
+        run: ./scripts/check_examples.sh "build-${{ matrix.precision }}"
+
+  viz:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            ninja-build clang-20 \
+            libboost-all-dev python3-dev python3-pip pkg-config
+          python3 -m pip install --user 'cmake>=3.30'
+
+      - name: Install SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+
+      - name: Add GitHub to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
+
+      - name: Clone infrastructure (minimal submodules)
+        run: |
+          cd "${GITHUB_WORKSPACE}/.."
+          git clone --depth 1 "${INFRA_REPO}" infrastructure
+          cd infrastructure
+          git submodule update --init --depth 1 type_traist_notebook py_visualizer
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Build minimal infrastructure
+        run: |
+          export PATH="${HOME}/.local/bin:${PATH}"
+          bash scripts/ci_infra_minimal.sh "${GITHUB_WORKSPACE}/../infrastructure"
+          echo "CMAKE_PREFIX_PATH=${GITHUB_WORKSPACE}/../infrastructure/.inf_install" >> "$GITHUB_ENV"
+
+      - name: Configure (plugins ON)
+        run: |
+          cmake -S . -B build-viz -G Ninja \
+            -DCMAKE_CXX_COMPILER=clang++-20 \
+            -DCMAKE_C_COMPILER=clang-20 \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DOPTICS_PRECISION=f64 \
+            -DOPTICS_ENABLE_PYTHON_CORE_PLUGINS=ON \
+            -DOPTICS_BUILD_CSHARP=OFF \
+            -DOPTICS_BUILD_MATLAB=OFF \
+            -DCMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}"
+
+      - name: Build
+        run: cmake --build build-viz
+
+      - name: Test viz
+        env:
+          MPLBACKEND: Agg
+        run: ctest --test-dir build-viz -L viz --output-on-failure
+
+  matlab-bindings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build clang-20 python3-pip pkg-config
+          python3 -m pip install --user 'cmake>=3.30'
+
+      - name: Install SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+
+      - name: Add GitHub to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
+
+      - name: Clone infrastructure (minimal submodules)
+        run: |
+          cd "${GITHUB_WORKSPACE}/.."
+          git clone --depth 1 "${INFRA_REPO}" infrastructure
+          cd infrastructure
+          git submodule update --init --depth 1 type_traist_notebook
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Build minimal infrastructure (type_traist only)
+        run: |
+          export PATH="${HOME}/.local/bin:${PATH}"
+          INFRA="${GITHUB_WORKSPACE}/../infrastructure"
+          PREFIX="${INFRA}/.inf_install"
+          cmake -S "${INFRA}/type_traist_notebook" -B "${INFRA}/type_traist_notebook/build" \
+            -DCMAKE_CXX_COMPILER=clang++-20 \
+            -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
+            -DCMAKE_PREFIX_PATH="${PREFIX}"
+          cmake --build "${INFRA}/type_traist_notebook/build" -j"$(nproc)"
+          cmake --install "${INFRA}/type_traist_notebook/build"
+          echo "CMAKE_PREFIX_PATH=${PREFIX}" >> "$GITHUB_ENV"
+
+      - name: Configure (MATLAB ON, expect skip)
+        run: |
+          cmake -S . -B build-matlab -G Ninja \
+            -DCMAKE_CXX_COMPILER=clang++-20 \
+            -DCMAKE_C_COMPILER=clang-20 \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DOPTICS_PRECISION=f64 \
+            -DOPTICS_BUILD_MATLAB=ON \
+            -DOPTICS_BUILD_CSHARP=OFF \
+            -DOPTICS_ENABLE_PYTHON_CORE_PLUGINS=OFF \
+            -DCMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}" \
+            2>&1 | tee cmake-matlab.log
+
+      - name: Build
+        run: cmake --build build-matlab
+
+      - name: Verify MATLAB bindings
+        run: ./scripts/verify_matlab_bindings.sh build-matlab cmake-matlab.log
