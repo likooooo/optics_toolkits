@@ -33,9 +33,19 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
-          ssh-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+          submodules: false
           persist-credentials: false
+
+      - name: Install SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+
+      - name: Add GitHub to known_hosts
+        run: ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
+
+      - name: Fetch simulation core
+        run: bash scripts/ci_fetch_core.sh
 
       - name: Clone infrastructure (minimal submodules)
         run: |
@@ -94,9 +104,19 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
-          ssh-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+          submodules: false
           persist-credentials: false
+
+      - name: Install SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+
+      - name: Add GitHub to known_hosts
+        run: ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
+
+      - name: Fetch simulation core
+        run: bash scripts/ci_fetch_core.sh
 
       - name: Clone infrastructure (minimal submodules)
         run: |
@@ -149,9 +169,19 @@ jobs:
 
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
-          ssh-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+          submodules: false
           persist-credentials: false
+
+      - name: Install SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
+
+      - name: Add GitHub to known_hosts
+        run: ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
+
+      - name: Fetch simulation core
+        run: bash scripts/ci_fetch_core.sh
 
       - name: Clone infrastructure (minimal submodules)
         run: |
