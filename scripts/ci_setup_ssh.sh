@@ -12,6 +12,11 @@ if [ -z "${KEY_MATERIAL}" ]; then
     exit 1
 fi
 
+if printf '%s' "${KEY_MATERIAL}" | head -1 | grep -q '^ssh-ed25519 \|^ssh-rsa '; then
+    echo "::error::MY_PRIVATE_KEY_1 looks like a PUBLIC key (.pub), not a private key" >&2
+    exit 1
+fi
+
 mkdir -p ~/.ssh
 umask 077
 printf '%s' "${KEY_MATERIAL}" > ~/.ssh/ci_key

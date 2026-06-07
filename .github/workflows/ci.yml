@@ -36,13 +36,10 @@ jobs:
           submodules: false
           persist-credentials: false
 
-      - name: Install SSH Key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
-
-      - name: Add GitHub to known_hosts
-        run: ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
+      - name: Setup SSH for private repos
+        env:
+          MY_PRIVATE_KEY_1: ${{ secrets.MY_PRIVATE_KEY_1 }}
+        run: bash scripts/ci_setup_ssh.sh
 
       - name: Fetch simulation core
         run: bash scripts/ci_fetch_core.sh
@@ -107,13 +104,10 @@ jobs:
           submodules: false
           persist-credentials: false
 
-      - name: Install SSH Key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
-
-      - name: Add GitHub to known_hosts
-        run: ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
+      - name: Setup SSH for private repos
+        env:
+          MY_PRIVATE_KEY_1: ${{ secrets.MY_PRIVATE_KEY_1 }}
+        run: bash scripts/ci_setup_ssh.sh
 
       - name: Fetch simulation core
         run: bash scripts/ci_fetch_core.sh
@@ -172,13 +166,10 @@ jobs:
           submodules: false
           persist-credentials: false
 
-      - name: Install SSH Key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.MY_PRIVATE_KEY_1 }}
-
-      - name: Add GitHub to known_hosts
-        run: ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
+      - name: Setup SSH for private repos
+        env:
+          MY_PRIVATE_KEY_1: ${{ secrets.MY_PRIVATE_KEY_1 }}
+        run: bash scripts/ci_setup_ssh.sh
 
       - name: Fetch simulation core
         run: bash scripts/ci_fetch_core.sh
