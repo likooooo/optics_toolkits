@@ -24,22 +24,15 @@ jobs:
             libboost-all-dev python3-dev python3-pip pkg-config
           python3 -m pip install --user 'cmake>=3.30'
 
-      - name: Install SSH Key
-        shell: bash
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.MY_PRIVATE_KEY_1 }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-
-      - name: Add GitHub to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
-
       - uses: actions/checkout@v4
         with:
           submodules: false
           persist-credentials: false
+
+      - name: Setup SSH for private submodules
+        env:
+          MY_PRIVATE_KEY_1: ${{ secrets.MY_PRIVATE_KEY_1 }}
+        run: bash scripts/ci_setup_ssh.sh
 
       - name: Init core submodule
         run: git submodule sync --recursive && git submodule update --init --recursive --depth 1 core
@@ -92,22 +85,15 @@ jobs:
             libboost-all-dev python3-dev python3-pip pkg-config
           python3 -m pip install --user 'cmake>=3.30'
 
-      - name: Install SSH Key
-        shell: bash
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.MY_PRIVATE_KEY_1 }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-
-      - name: Add GitHub to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
-
       - uses: actions/checkout@v4
         with:
           submodules: false
           persist-credentials: false
+
+      - name: Setup SSH for private submodules
+        env:
+          MY_PRIVATE_KEY_1: ${{ secrets.MY_PRIVATE_KEY_1 }}
+        run: bash scripts/ci_setup_ssh.sh
 
       - name: Init core submodule
         run: git submodule sync --recursive && git submodule update --init --recursive --depth 1 core
@@ -154,22 +140,15 @@ jobs:
           sudo apt-get install -y ninja-build clang-20 python3-pip pkg-config
           python3 -m pip install --user 'cmake>=3.30'
 
-      - name: Install SSH Key
-        shell: bash
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.MY_PRIVATE_KEY_1 }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-
-      - name: Add GitHub to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts
-
       - uses: actions/checkout@v4
         with:
           submodules: false
           persist-credentials: false
+
+      - name: Setup SSH for private submodules
+        env:
+          MY_PRIVATE_KEY_1: ${{ secrets.MY_PRIVATE_KEY_1 }}
+        run: bash scripts/ci_setup_ssh.sh
 
       - name: Init core submodule
         run: git submodule sync --recursive && git submodule update --init --recursive --depth 1 core
