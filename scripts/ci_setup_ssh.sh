@@ -52,3 +52,18 @@ else
     cat /tmp/ssh-test.txt
     exit 1
 fi
+
+verify_repo() {
+    local repo="$1"
+    if ! git ls-remote "git@github.com:likooooo/${repo}.git" HEAD >/dev/null 2>&1; then
+        echo "::error::Deploy key cannot read likooooo/${repo}. Add this key's .pub as a read deploy key on that repo, or use MY_PRIVATE_KEY_1 with broader access." >&2
+        return 1
+    fi
+    echo "Deploy key can read ${repo}"
+}
+
+verify_repo simulation
+verify_repo type_traist_notebook
+if [ "${CI_VERIFY_PY_VISUALIZER:-1}" = "1" ]; then
+    verify_repo py_visualizer
+fi

@@ -169,6 +169,7 @@ jobs:
       - name: Setup SSH for private repos
         env:
           MY_PRIVATE_KEY_1: ${{ secrets.MY_PRIVATE_KEY_1 }}
+          CI_VERIFY_PY_VISUALIZER: "0"
         run: bash scripts/ci_setup_ssh.sh
 
       - name: Fetch simulation core
